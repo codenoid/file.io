@@ -1,0 +1,245 @@
+<!DOCTYPE HTML>
+<!--
+	Fractal by HTML5 UP
+	html5up.net | @n33co
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+
+<head>
+    <title>file ayo - Ephemeral file sharing</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="static/main.css" />
+    <link href="static/fineuploader-3.6.4.css" rel="stylesheet">
+    <script src="static/fineuploader-3.6.4.min.js"></script>
+    <style>
+        .js-copytextarea {
+            display: none;
+        }
+    </style>
+</head>
+
+<body id="top">
+
+    <!-- Header -->
+    <header id="header">
+        <div class="content">
+            <h1><a href="#">file ayo</a></h1>
+            <p>Ephemeral file sharing
+                <br /> Convenient, anonymous and secure</p>
+            <ul class="actions">
+                <li class="upload-container">
+                    <div id="fine-uploader" class="button special icon fa-upload">Upload</div>
+                </li>
+                <li><a href="#one" class="button icon fa-chevron-down">Learn More</a></li>
+            </ul>
+            <small>by using file ayo you agree to not eat soup with a fork</small>
+            <br>
+            <br>
+
+        </div>
+    </header>
+
+    <!-- One -->
+    <section id="one" class="wrapper style2 special">
+        <header class="major">
+            <h2>"It's like snapchat, but for files!"</h2> - Ben A, Philadelphia
+            <br/>
+            <br/>
+            <h4>Simply upload a file, share the link, and after it is downloaded,<br/>
+					 the file is completely deleted.  For added security, set an expiration on the file and it is <br/>
+					  deleted within a certain amount of time, even if it was never downloaded.<br/><br/>
+					  All files are (currently) not-encrypted when stored on our servers.<br/><br/></h4>
+            <ul class="icons major">
+                <li><span class="icon fa-camera-retro"><span class="label">Shoot</span></span>
+                </li>
+                <li><span class="icon fa-refresh"><span class="label">Process</span></span>
+                </li>
+                <li><span class="icon fa-cloud"><span class="label">Upload</span></span>
+                </li>
+            </ul>
+    </section>
+
+    <!-- Two -->
+    <section id="api" class="wrapper">
+        <div class="inner alt">
+            <section class="spotlight">
+                <div class="content">
+                    <h3>Easy to use API</h3>
+                    <p>Try it out:
+                        <br/>
+                        <br/>
+                        <code>
+							$ curl -F "file=@test.txt" https://file ayo<br/>
+{"success":true,"key":"2ojE41","link":"https://file ayo/2ojE41","expiry":"14 days"}<br/>
+$ curl https://file ayo/2ojE41 <br/>
+This is a test<br/>
+$ curl https://file ayo/2ojE41<br/>
+{"success":false,"error":404,"message":"Not Found"}
+							</code>
+                    </p>
+                    <p>Or set an expiration:
+                        <br/>
+                        <br/>
+                        <code>
+							$ curl -F "file=@test.txt" https://file ayo/?expires=1w<br/>
+{"success":true,"key":"aQbnDJ","link":"https://file ayo/aQbnDJ","expiry":"7 days"}<br/>
+$ sleep 604801 <br/>
+$ curl https://file ayo/aQbnDJ<br/>
+{"success":false,"error":404,"message":"Not Found"}
+							</code>
+                        <br/>
+                        <br/> The query param <strong>expires</strong> must be a positive integer which, by default, represents the number of days until the file will be deleted (defaults to 14 days). If you follow it with <strong>w</strong>, it will be the number of weeks. <strong>m</strong> for months and <strong>y</strong> for years.
+                    </p>
+                    <p>You can also send direct text to file ayo:
+                        <br/>
+                        <br/>
+                        <code>
+							$ curl --data "text=this is a secret pw" https://file ayo <br/>
+{"success":true,"key":"pgiPc2","link":"https://file ayo/pgiPc2","expiry":"14 days"}<br/>
+$ curl https://file ayo/pgiPc2<br/>
+this is a secret pw<br/>
+$ curl https://file ayo/pgiPc2<br/>
+{"success":false,"error":404,"message":"Not Found"}
+							</code>
+                        <br/>
+                        <br/> The query param <strong>expires</strong> must be a positive integer which, by default, represents the number of days until the file will be deleted (defaults to 14 days). If you follow it with <strong>w</strong>, it will be the number of weeks. <strong>m</strong> for months and <strong>y</strong> for years.
+                    </p>
+                </div>
+            </section>
+
+        </div>
+    </section>
+
+    <!-- Three -->
+    <section id="faq" class="wrapper">
+        <div class="inner alt">
+            <section class="spotlight">
+                <div class="content">
+                    <h3>FAQ</h3>
+
+                    <h4>Are there log files or any backups of the file after it is deleted?</h4>
+                    <p>No, it is anonymous and we erase everything. Our log files contain no identifying information. There are no backups, and all files are stored encrypted.</p>
+                    <h4>Is it free?</h4>
+                    <p>Yes!</p>
+                    <h4>What are some use cases?</h4>
+                    <p><a href="https://temporary.pw">temporary.pw</a> is an example of a pretty cool use case.</p>
+                    <h4>What kinds of files can I share?</h4>
+                    <p>No illegal or copyrighted content is allowed. By using file ayo you agree to the <a href="/tos.html">Terms of Service</a></p>
+                    <h4>Is there a size limit?</h4>
+                    <p>Yes, there is a 5GB per file limit for the free version.</p>
+                    <h4>I have a question or comment - how can I contact you?</h4>
+                    <p>We would love to hear from you: <a href="mailto:support@file ayo">support@file ayo</a></p>
+                    <h4>I am not a programmer - how do I set an expiration date for the file?</h4>
+                    <p>You can use <a target="_blank" href="https://resttesttest.com/">resttesttest.com</a>. For the "endpoint" put:
+
+                        <code>https://file ayo/?expires=1w</code> You can change the "expires" to whatever you want - "1w" is one week.
+                        <br> You can see <a target="_blank" href="/assets/img/resttesttest.png">this screenshot</a> for an example, where the resulting link to your file is highlighted.</p>
+                    <h4>Who are you and how can I trust you?</h4>
+                    <p>file ayo is a project of <a href="http://introvert.com">introvert.com</a>. It was created simply out of the joy of trying to build cool things on the internet, and we thought it may be useful for others. We take privacy very seriously and do not save any data once it has been deleted.</p>
+                    <h4>How did you get such a great domain name?</h4>
+                    <p>From the awesome service at <a href="http://park ayo">park ayo</a> - they have a lot of great <a href="http://park ayo">startup domain names</a> for hackers.</p>
+                    <textarea class="js-copytextarea"></textarea>
+                </div>
+            </section>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="footer">
+        <p class="copyright">&copy; Copyright 2020 <a href="http://introvert.com">introvert.com LLC</a>. Design credits: <a href="http://html5up.net">HTML5 UP</a></p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="static/jquery.min.js"></script>
+
+    <script>
+        function createUploader() {
+            var uploader = new qq.FineUploader({
+                element: document.getElementById('fine-uploader'),
+                request: {
+                    endpoint: '/',
+                    inputName: 'file'
+                },
+                camera: {
+                    ios: true
+                },
+                text: {
+                    uploadButton: 'Upload'
+                },
+                template: '<div class="qq-uploader span12">' +
+                    '<pre class="qq-upload-drop-area span12"><span>{dragZoneText}</span></pre>' +
+                    '<div class="qq-upload-button btn btn-success">{uploadButtonText}</div>' +
+                    '<span class="qq-drop-processing"><span>{dropProcessingText}</span><span class="qq-drop-processing-spinner"></span></span>' +
+                    '<ul class="qq-upload-list" style="margin-top: 10px; text-align: center;"></ul>' +
+                    '</div>',
+                classes: {
+                    success: 'alert alert-success',
+                    fail: 'alert alert-error'
+                },
+                callbacks: {
+                    onComplete: function(id, fileName, responseJSON) {
+                        $(".btn-success").hide();
+                        $("#fine-uploader").removeClass("button");
+                        $("#fine-uploader").removeClass("fa-upload");
+                        if (responseJSON.success) {
+                            var success_text = '<div class="alert alert-success"><strong>Upload success.</strong> Here is the link to your file:</div>' +
+                                '<span class="lead"><a target="_blank" href="' + window.location + responseJSON.key + '">' + window.location + responseJSON.key + '</a> <button class="js-textareacopybtn" style="vertical-align:top;">Copy Link</button> <button class="js-addanotherbtn" style="vertical-align:top;">Upload Another</button><br /><br /></span>';
+                            var itemFromFileId = this.getItemByFileId(id);
+                            var itemFromFileIdHTML = $(itemFromFileId).html();
+                            $(itemFromFileId).html(success_text);
+                            $(".js-copytextarea").show();
+                            $(".js-copytextarea").val(window.location + responseJSON.key);
+                            var copyTextareaBtn = document.querySelector('.js-textareacopybtn');
+
+                            copyTextareaBtn.addEventListener('click', function(event) {
+                                var copyTextarea = document.querySelector('.js-copytextarea');
+                                copyTextarea.select();
+
+                                try {
+                                    var successful = document.execCommand('copy');
+                                } catch (err) {
+                                    console.log('Unable to copy link');
+                                }
+                            });
+
+                            var addAnother = document.querySelector('.js-addanotherbtn');
+                            addAnother.addEventListener('click', function(event) {
+                                $(itemFromFileId).html(itemFromFileIdHTML);
+                                $(".btn-success").show();
+                                $("#fine-uploader").addClass("button");
+                                $("#fine-uploader").addClass("fa-upload");
+                                $(".qq-upload-list").html("");
+                                $(".qq-upload-list").hide();
+                            });
+                        }
+                    },
+                    onUpload: function(id, fileName, responseJSON) {
+                        $(".btn-success").hide();
+                        $("#fine-uploader").removeClass("button");
+                        $("#fine-uploader").removeClass("fa-upload");
+                        $(".qq-upload-list").show();
+                    },
+                    onCancel: function(id, fileName, responseJSON) {
+                        $(".btn-success").show();
+                        $("#fine-uploader").addClass("button");
+                        $("#fine-uploader").addClass("fa-upload");
+                    }
+                },
+                failedUploadTextDisplay: {
+                    mode: 'custom',
+                    maxChars: 40,
+                    responseProperty: 'message',
+                    enableTooltip: true
+                }
+            });
+        }
+
+        window.onload = createUploader;
+    </script>
+
+</body>
+
+</html>
