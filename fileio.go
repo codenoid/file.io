@@ -6,10 +6,12 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 
 	gonanoid "github.com/matoous/go-nanoid"
 )
 
+var fs = http.FileServer(http.Dir("./web/static"))
 var indexHTML, _ = ioutil.ReadFile("./web/views/index.html")
 var stg storage.Storage
 
@@ -22,44 +24,51 @@ func main() {
 	// host, username, password, database
 	stg.Connect("127.0.0.1:6379", "", "", "0")
 
-	http.HandleFunc("/", Index)
-
-	// serve static file
-	fs := http.FileServer(http.Dir("./web/static"))
-	http.Handle("/static/", http.StripPrefix("/static", fs))
-
 	// start listen
-	fmt.Println(http.ListenAndServe(":8080", nil))
+	fmt.Println(http.ListenAndServe(":8080", http.HandlerFunc(Index)))
 }
 
 // Index for testing
 func Index(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
-		fileID := r.URL.Query().Get("id")
-		if fileID == "" {
+
+		// Serve static file
+		if len(r.URL.Path) > 7 {
+			if r.URL.Path[:7] == "/static" {
+				http.StripPrefix("/static", fs).ServeHTTP(w, r)
+				return
+			}
+		}
+
+		// show index.html
+		if r.URL.Path == "/" {
 			w.Header().Set("Content-Type", "text/html")
 			w.Write(indexHTML)
 			return
-		} else {
+		}
 
+		// has file id
+		fileID := strings.ReplaceAll(r.URL.Path, "/", "")
+		if len(fileID) == 6 {
+
+			// get file from database
 			bytes, err := stg.Get(fileID)
-			if err != nil {
-				fmt.Println(err)
-				w.WriteHeader(404)
-				w.Header().Set("Content-Type", "application/json")
-				w.Write([]byte(`{"success": false, "error": 404, "message": "file not found"} `))
+			if err == nil {
+				// todo get mime-type by []byte file
+				// w.Header().Set("Content-Type", "")
+				w.Write(bytes)
+
+				// Delete file from storage
+				stg.Del(fileID)
+
 				return
 			}
-
-			// todo get mime-type by []byte file
-			// w.Header().Set("Content-Type", "")
-			w.Write(bytes)
-
-			// Delete file from storage
-			stg.Del(fileID)
-
-			return
 		}
+
+		w.WriteHeader(404)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write([]byte(`{"success": false, "error": 404, "message": "file not found"} `))
+		return
 	}
 	if r.Method == "POST" {
 		r.ParseMultipartForm(10 << 20)
@@ -88,7 +97,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 				data := map[string]interface{}{
 					"success": true,
 					"key":     id,
-					"link":    "",
+					"link":    r.Host + "/" + id,
 					"expiry":  "30 minutes",
 					"sec_exp": 1800,
 				}
