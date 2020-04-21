@@ -4,6 +4,27 @@
 
 ![screenshot](ss.png)
 
+## Installation
+
+1. Make sure go already installed on your system
+2. git clone https://github.com/codenoid/file.io.git
+3. cd file.io
+4. go build -trimpath
+5. run `./fileio`
+
+## Example Usage Using CURL
+
+```sh
+# upload
+$ curl -F "file=@filename.jpg" http://localhost:8080
+{"expiry":"30 minutes","key":"eA9666","link":"","sec_exp":1800,"success":true}
+# download
+$ wget http://localhost/?id=eA9666
+# xxxx-file-name downloaded, use chmod if it was binary
+$ wget http://localhost/?id=eA9666
+# 404 not found
+```
+
 ## Features
 
 - [x] Multiple Storage Support (currently redis)
