@@ -2,6 +2,10 @@
 
 One interface to connect many of database, This package is aimed not only used for codenoid/file.io
 
+## Installation
+
+`go get -u github.com/codenoid/file.io/storage`
+
 ## Storage Support
 
 - [x] Redis
@@ -14,6 +18,9 @@ One interface to connect many of database, This package is aimed not only used f
 ## Example Usage
 
 ```go
+
+import "github.com/codenoid/file.io/storage"
+
 stg = storage.Storage{
 	Type: "redis",
 }
