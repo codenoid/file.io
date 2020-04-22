@@ -17,11 +17,11 @@
 ```sh
 # upload
 $ curl -F "file=@filename.jpg" http://localhost:8080
-{"expiry":"30 minutes","key":"eA9666","link":"","sec_exp":1800,"success":true}
+{"expiry":"30 minutes","key":"eA9666","link":"http://localhost:8080/eA9666","sec_exp":1800,"success":true}
 # download
-$ wget http://localhost/?id=eA9666
+$ wget http://localhost:8080/eA9666
 # xxxx-file-name downloaded, use chmod if it was binary
-$ wget http://localhost/?id=eA9666
+$ wget http://localhost:8080/eA9666
 # 404 not found
 ```
 
