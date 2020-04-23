@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
+	"os"
 	"strings"
 
 	gonanoid "github.com/matoous/go-nanoid"
@@ -21,8 +23,32 @@ func main() {
 		Type: "redis",
 	}
 
+	// start: fix this
+	auth := map[string]string{
+		"username": "",
+		"password": "",
+		"host":     "127.0.0.1:6379",
+		"database": "0",
+	}
+
+	// username:password@127.0.0.1:6379/0
+	if os.Getenv("DB_URI") != "" {
+		connURI, err := url.Parse(os.Getenv("DB_URI"))
+		if err != nil {
+			panic(err)
+		}
+
+		stg.Type = connURI.Scheme
+
+		auth["username"] = connURI.User.Username()
+		auth["password"], _ = connURI.User.Password()
+		auth["host"] = connURI.Host
+		auth["database"] = strings.Replace(connURI.Path, "/", "", 1)
+	}
+
 	// host, username, password, database
-	stg.Connect("127.0.0.1:6379", "", "", "0")
+	stg.Connect(auth["host"], auth["username"], auth["password"], auth["database"])
+	// end: fix this
 
 	// start listen
 	fmt.Println(http.ListenAndServe(":8080", http.HandlerFunc(Index)))

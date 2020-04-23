@@ -14,7 +14,7 @@ Using [file.io-clone](https://hub.docker.com/r/codenoid/file.io-clone) docker im
 
 ```sh
 $ docker pull codenoid/file.io-clone
-$ docker run -p 3003:8080 codenoid/file.io-clone
+$ docker run --env DB_URI=redis://127.0.0.1:6379/0 -p 3003:8080 codenoid/file.io-clone
 $ # open *:3003 on your browser
 ```
 
@@ -28,7 +28,17 @@ $ go build -trimpath
 $ ./fileio # open localhost:8080 on your browser
 ```
 
-## Example Usage Using CURL
+### Configuring
+
+set `DB_URI` environment variable for database connection info, for example : 
+
+```
+DB_URI=redis://127.0.0.1:6379/0
+```
+
+## Example Usage
+
+### Using CURL
 
 ```sh
 # upload
