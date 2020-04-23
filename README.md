@@ -25,12 +25,12 @@ $ wget http://localhost:8080/eA9666
 # 404 not found
 ```
 
-## Features
+## Features & TODO
 
 - [x] Multiple Storage Support (currently redis)
 - [x] Simple API
 - [ ] Custom expiration
-- [ ] Mime-type detection from []byte
+- [ ] Content-Disposition header
 
 # Legal
 
