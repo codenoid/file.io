@@ -42,10 +42,10 @@ DB_URI=redis://127.0.0.1:6379/0
 
 ```sh
 # upload
-$ curl -F "file=@filename.jpg" http://localhost:8080
-{"expiry":"30 minutes","key":"eA9666","link":"http://localhost:8080/eA9666","sec_exp":1800,"success":true}
+$ curl -F "file=@filename.jpg" http://localhost:8080/?exp=60
+{"expiry":"1 minutes","key":"eA9666","link":"http://localhost:8080/eA9666","sec_exp": 60,"success":true}
 # download
-$ wget http://localhost:8080/eA9666
+$ wget --content-disposition http://localhost:8080/eA9666
 # xxxx-file-name downloaded, use chmod if it was binary
 $ wget http://localhost:8080/eA9666
 # 404 not found
@@ -53,11 +53,12 @@ $ wget http://localhost:8080/eA9666
 
 ## Features & TODO
 
+- [x] Custom expiration option
+- [x] Content-Disposition header
 - [x] Multiple Storage Support (currently redis)
+- [ ] Max download option
 - [x] Simple API
-- [ ] Custom expiration
-- [ ] Content-Disposition header
 
 # Legal
 
-This code is in no way affiliated with, authorized, maintained, sponsored or endorsed by file.io or any of its affiliates or subsidiaries. This is an independent and unofficial software. Use at your own risk.
+This code is in no way affiliated with, authorized, maintained, sponsored or endorsed by [https://www.file.io](https://file.io) or any of its affiliates or subsidiaries. This is an independent and unofficial software. Use at your own risk.
