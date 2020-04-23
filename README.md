@@ -6,7 +6,7 @@
 
 ## Installation
 
-the default port are 8080
+By default, this project rely on [Redis](https://redis.io/download) as primary database, abd the default app port are 8080
 
 ### Docker
 
