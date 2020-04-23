@@ -6,11 +6,27 @@
 
 ## Installation
 
-1. Make sure go already installed on your system
-2. git clone https://github.com/codenoid/file.io.git
-3. cd file.io
-4. go build -trimpath
-5. run `./fileio`
+the default port are 8080
+
+### Docker
+
+Using [file.io-clone](https://hub.docker.com/r/codenoid/file.io-clone) docker image is the fastest way to try file.io clone if you already have docker installed 
+
+```sh
+$ docker pull codenoid/file.io-clone
+$ docker run -p 3003:8080 codenoid/file.io-clone
+$ # open *:3003 on your browser
+```
+
+### Building From Source
+
+before this, make sure [Go](https://golang.org/dl/) already installed on your machine
+
+```sh
+$ git clone https://github.com/codenoid/file.io.git && cd file.io
+$ go build -trimpath
+$ ./fileio # open localhost:8080 on your browser
+```
 
 ## Example Usage Using CURL
 
