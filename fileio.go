@@ -97,7 +97,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 				data := map[string]interface{}{
 					"success": true,
 					"key":     id,
-					"link":    r.Host + "/" + id,
+					"link":    "http://" + r.Host + "/" + id,
 					"expiry":  "30 minutes",
 					"sec_exp": 1800,
 				}
