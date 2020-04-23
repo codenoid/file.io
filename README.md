@@ -14,8 +14,8 @@ Using [file.io-clone](https://hub.docker.com/r/codenoid/file.io-clone) docker im
 
 ```sh
 $ docker pull codenoid/file.io-clone
-$ docker run --env DB_URI=redis://127.0.0.1:6379/0 -p 3003:8080 codenoid/file.io-clone
-$ # open *:3003 on your browser
+$ docker run --env DB_URI=redis://host.docker.internal:6379/0 -p 3003:8080 codenoid/file.io-clone
+  # host.docker.internal currently only works in Windows & Mac, open *:3003 on your browser
 ```
 
 ### Building From Source
