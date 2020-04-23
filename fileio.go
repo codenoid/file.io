@@ -10,6 +10,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/gabriel-vasile/mimetype"
 	gonanoid "github.com/matoous/go-nanoid"
 )
 
@@ -80,12 +81,20 @@ func Index(w http.ResponseWriter, r *http.Request) {
 			// get file from database
 			bytes, err := stg.Get(fileID)
 			if err == nil {
+				// set Content-Disposition header if fn-<file-id> are exist
+				filename, err := stg.Get("fn-" + fileID)
+				if err == nil {
+					w.Header().Set("Content-Disposition", "attachment; filename="+string(filename))
+					w.Header().Set("Content-Type", mimetype.Detect(bytes).String())
+				}
+
 				// todo get mime-type by []byte file
 				// w.Header().Set("Content-Type", "")
 				w.Write(bytes)
 
 				// Delete file from storage
 				stg.Del(fileID)
+				stg.Del("fn-" + fileID)
 
 				return
 			}
@@ -101,7 +110,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		// FormFile returns the first file for the given key `file`
 		// it also returns the FileHeader so we can get the Filename,
 		// the Header and the size of the file
-		file, _, err := r.FormFile("file")
+		file, fileHeader, err := r.FormFile("file")
 		if err != nil {
 			fmt.Println("Error Retrieving the File")
 			fmt.Println(err)
@@ -120,6 +129,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		if err == nil {
 			err = stg.Set(id, fileBytes, 1800)
 			if err == nil {
+				stg.Set("fn-"+id, []byte(fileHeader.Filename), 1810)
 				data := map[string]interface{}{
 					"success": true,
 					"key":     id,
