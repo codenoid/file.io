@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/gabriel-vasile/mimetype"
@@ -88,8 +89,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 					w.Header().Set("Content-Type", mimetype.Detect(bytes).String())
 				}
 
-				// todo get mime-type by []byte file
-				// w.Header().Set("Content-Type", "")
+				// write file []byte as response
 				w.Write(bytes)
 
 				// Delete file from storage
@@ -106,7 +106,19 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if r.Method == "POST" {
-		r.ParseMultipartForm(10 << 20)
+
+		fileExp := 30 // in minute
+		fileExpStr := r.URL.Query().Get("exp")
+		if fileExpStr != "" {
+			expInt, err := strconv.Atoi(fileExpStr)
+			if err != nil {
+				w.Write([]byte(`{"success": false, "error": 402, "message": "exp must be digit only, and in minutes"} `))
+				return
+			}
+			fileExp = expInt
+		}
+
+		r.ParseMultipartForm(1000 << 20)
 		// FormFile returns the first file for the given key `file`
 		// it also returns the FileHeader so we can get the Filename,
 		// the Header and the size of the file
@@ -127,15 +139,18 @@ func Index(w http.ResponseWriter, r *http.Request) {
 
 		id, err := gonanoid.Generate("AiUeO69", 6)
 		if err == nil {
-			err = stg.Set(id, fileBytes, 1800)
+			// set file content with id as key
+			err = stg.Set(id, fileBytes, fileExp*60)
 			if err == nil {
-				stg.Set("fn-"+id, []byte(fileHeader.Filename), 1810)
+				// set file name expiration with fn-<file-id> as key
+				stg.Set("fn-"+id, []byte(fileHeader.Filename), (fileExp+10)*60)
+				// setup json response
 				data := map[string]interface{}{
 					"success": true,
 					"key":     id,
 					"link":    "http://" + r.Host + "/" + id,
-					"expiry":  "30 minutes",
-					"sec_exp": 1800,
+					"expiry":  fileExpStr + " minutes", // fix this
+					"sec_exp": fileExp * 60,
 				}
 				resp, _ := json.Marshal(data)
 				w.Write(resp)
