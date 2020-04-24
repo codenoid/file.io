@@ -124,8 +124,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		// the Header and the size of the file
 		file, fileHeader, err := r.FormFile("file")
 		if err != nil {
-			fmt.Println("Error Retrieving the File")
-			fmt.Println(err)
+			w.Write([]byte(fmt.Sprintf(`{"success": false, "error": 402, "message": "%v"}`, err.Error())))
 			return
 		}
 		defer file.Close()
@@ -134,30 +133,38 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		// byte array
 		fileBytes, err := ioutil.ReadAll(file)
 		if err != nil {
-			fmt.Println(err)
-		}
-
-		id, err := gonanoid.Generate("AiUeO69", 6)
-		if err == nil {
-			// set file content with id as key
-			err = stg.Set(id, fileBytes, fileExp*60)
-			if err == nil {
-				// set file name expiration with fn-<file-id> as key
-				stg.Set("fn-"+id, []byte(fileHeader.Filename), (fileExp+10)*60)
-				// setup json response
-				data := map[string]interface{}{
-					"success": true,
-					"key":     id,
-					"link":    "http://" + r.Host + "/" + id,
-					"expiry":  fileExpStr + " minutes", // fix this
-					"sec_exp": fileExp * 60,
-				}
-				resp, _ := json.Marshal(data)
-				w.Write(resp)
+			if err != nil {
+				w.Write([]byte(fmt.Sprintf(`{"success": false, "error": 402, "message": "%v"}`, err.Error())))
 				return
 			}
 		}
-		w.Write([]byte(`{"success": false, "error": 402, "message": "failing"} `))
+
+		id, err := gonanoid.Generate("AiUeO69", 6)
+		if err != nil {
+			w.Write([]byte(fmt.Sprintf(`{"success": false, "error": 402, "message": "%v"}`, err.Error())))
+			return
+		}
+
+		// set file content with id as key
+		err = stg.Set(id, fileBytes, fileExp*60)
+		if err != nil {
+			if err != nil {
+				w.Write([]byte(fmt.Sprintf(`{"success": false, "error": 402, "message": "%v"}`, err.Error())))
+				return
+			}
+		}
+		// set file name expiration with fn-<file-id> as key
+		stg.Set("fn-"+id, []byte(fileHeader.Filename), (fileExp+10)*60)
+		// setup json response
+		data := map[string]interface{}{
+			"success": true,
+			"key":     id,
+			"link":    "http://" + r.Host + "/" + id,
+			"expiry":  fileExpStr + " minutes", // fix this
+			"sec_exp": fileExp * 60,
+		}
+		resp, _ := json.Marshal(data)
+		w.Write(resp)
 		return
 	}
 }
