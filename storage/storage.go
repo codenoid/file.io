@@ -20,13 +20,15 @@ type Storage struct {
 	Redis
 }
 
-// Connect will connect awfwjiawojf
-func (s *Storage) Connect(host, username, password, database string) {
+// Connect will connect
+func (s *Storage) Connect(host, username, password, database string) error {
 	switch s.Type {
 	case "redis":
 		s.Redis.Connect(host, password, database)
+		return nil
+	default:
+		return errors.New("storage not found")
 	}
-
 }
 
 // Set will save data to specified storage
