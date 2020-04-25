@@ -49,6 +49,16 @@ $ wget --content-disposition http://localhost:8080/eA9666
 # xxxx-file-name downloaded, use chmod if it was binary
 $ wget http://localhost:8080/eA9666
 # 404 not found
+
+# max file download times
+$ curl -F "file=@filename.jpg" http://localhost:8080/?exp=60&max=2
+{"expiry":"1 minutes","key":"eA9666","link":"http://localhost:8080/eA9OeA","sec_exp": 60,"success":true}
+$ wget --content-disposition http://localhost:8080/eA9OeA
+# downloaded
+$ wget --content-disposition http://localhost:8080/eA9OeA
+# downloaded
+$ wget --content-disposition http://localhost:8080/eA9OeA
+# 404 not found
 ```
 
 ## Features & TODO
