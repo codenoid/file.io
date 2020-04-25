@@ -116,6 +116,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 
 				return
 			}
+			stg.Del("mg-" + fileID)
 		}
 
 		w.WriteHeader(404)
