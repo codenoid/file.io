@@ -52,6 +52,12 @@ func main() {
 	stg.Connect(auth["host"], auth["username"], auth["password"], auth["database"])
 	// end: fix this
 
+	// runtime test
+	if err := stg.Set("test", []byte("test"), 1); err != nil {
+		fmt.Println("runtime test failed")
+		panic(err)
+	}
+
 	// start listen
 	fmt.Println(http.ListenAndServe(":8080", http.HandlerFunc(Index)))
 }
