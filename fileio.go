@@ -82,6 +82,21 @@ func Index(w http.ResponseWriter, r *http.Request) {
 			// get file from database
 			bytes, err := stg.Get(fileID)
 			if err == nil {
+
+				drop := false
+				// download rate limiting, check if the quota are still sufficient
+				quotaByte, err := stg.Get("mg-" + fileID)
+				if err == nil {
+					quota, err := strconv.Atoi(string(quotaByte))
+					if err == nil {
+						// fix this
+						stg.Set("mg-"+fileID, []byte(strconv.Itoa(quota-1)), 0)
+						if quota <= 1 {
+							drop = true
+						}
+					}
+				}
+
 				// set Content-Disposition header if fn-<file-id> are exist
 				filename, err := stg.Get("fn-" + fileID)
 				if err == nil {
@@ -92,9 +107,12 @@ func Index(w http.ResponseWriter, r *http.Request) {
 				// write file []byte as response
 				w.Write(bytes)
 
-				// Delete file from storage
-				stg.Del(fileID)
-				stg.Del("fn-" + fileID)
+				if drop {
+					// Delete file from storage
+					stg.Del(fileID)
+					stg.Del("fn-" + fileID)
+					stg.Del("mg-" + fileID)
+				}
 
 				return
 			}
@@ -118,6 +136,17 @@ func Index(w http.ResponseWriter, r *http.Request) {
 			fileExp = expInt
 		}
 
+		maxDownload := 1
+		maxDownloadStr := r.URL.Query().Get("max")
+		if maxDownloadStr != "" {
+			maxInt, err := strconv.Atoi(maxDownloadStr)
+			if err != nil {
+				w.Write([]byte(`{"success": false, "error": 402, "message": "max download must be digit only"} `))
+				return
+			}
+			maxDownload = maxInt
+		}
+
 		r.ParseMultipartForm(1000 << 20)
 		// FormFile returns the first file for the given key `file`
 		// it also returns the FileHeader so we can get the Filename,
@@ -130,41 +159,35 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		defer file.Close()
 
 		// read all of the contents of our uploaded file into a
-		// byte array
+		// byte array, fix this
 		fileBytes, err := ioutil.ReadAll(file)
-		if err != nil {
-			if err != nil {
-				w.Write([]byte(fmt.Sprintf(`{"success": false, "error": 402, "message": "%v"}`, err.Error())))
-				return
+		if err == nil {
+			// generate random but short unique based on nanoid
+			// the payload are AiUeO69 with length 6
+			id, err := gonanoid.Generate("AiUeO69", 6)
+			if err == nil {
+				// set file content with id as key
+				err = stg.Set(id, fileBytes, fileExp*60)
+				if err == nil {
+					// set file max get / read
+					stg.Set("mg-"+id, []byte(strconv.Itoa(maxDownload)), (fileExp+10)*60)
+					// set file name expiration with fn-<file-id> as key
+					stg.Set("fn-"+id, []byte(fileHeader.Filename), (fileExp+10)*60)
+					// setup json response
+					data := map[string]interface{}{
+						"success": true,
+						"key":     id,
+						"link":    "http://" + r.Host + "/" + id,
+						"expiry":  fileExpStr + " minutes", // fix this
+						"sec_exp": fileExp * 60,
+					}
+					resp, _ := json.Marshal(data)
+					w.Write(resp)
+					return
+				}
 			}
 		}
-
-		id, err := gonanoid.Generate("AiUeO69", 6)
-		if err != nil {
-			w.Write([]byte(fmt.Sprintf(`{"success": false, "error": 402, "message": "%v"}`, err.Error())))
-			return
-		}
-
-		// set file content with id as key
-		err = stg.Set(id, fileBytes, fileExp*60)
-		if err != nil {
-			if err != nil {
-				w.Write([]byte(fmt.Sprintf(`{"success": false, "error": 402, "message": "%v"}`, err.Error())))
-				return
-			}
-		}
-		// set file name expiration with fn-<file-id> as key
-		stg.Set("fn-"+id, []byte(fileHeader.Filename), (fileExp+10)*60)
-		// setup json response
-		data := map[string]interface{}{
-			"success": true,
-			"key":     id,
-			"link":    "http://" + r.Host + "/" + id,
-			"expiry":  fileExpStr + " minutes", // fix this
-			"sec_exp": fileExp * 60,
-		}
-		resp, _ := json.Marshal(data)
-		w.Write(resp)
+		w.Write([]byte(fmt.Sprintf(`{"success": false, "error": 402, "message": "%v"}`, err.Error())))
 		return
 	}
 }
