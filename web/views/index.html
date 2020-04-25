@@ -7,7 +7,7 @@
 <html>
 
 <head>
-    <title>file ayo - Ephemeral file sharing</title>
+    <title>example.com - Ephemeral file sharing</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="static/main.css" />
@@ -25,7 +25,7 @@
     <!-- Header -->
     <header id="header">
         <div class="content">
-            <h1><a href="#">file ayo</a></h1>
+            <h1><a href="#">File ayo</a></h1>
             <p>Ephemeral file sharing
                 <br /> Convenient, anonymous and secure</p>
             <ul class="actions">
@@ -34,7 +34,7 @@
                 </li>
                 <li><a href="#one" class="button icon fa-chevron-down">Learn More</a></li>
             </ul>
-            <small>by using file ayo you agree to not eat soup with a fork</small>
+            <small>by using File ayo you agree to not eat soup with a fork</small>
             <br>
             <br>
 
@@ -71,11 +71,11 @@
                         <br/>
                         <br/>
                         <code>
-							$ curl -F "file=@test.txt" https://file ayo<br/>
-{"success":true,"key":"2ojE41","link":"https://file ayo/2ojE41","expiry":"14 days"}<br/>
-$ curl https://file ayo/2ojE41 <br/>
+							$ curl -F "file=@test.txt" https://example.com<br/>
+{"success":true,"key":"2ojE41","link":"https://example.com/2ojE41","expiry":"30 minutes"}<br/>
+$ curl https://example.com/2ojE41 <br/>
 This is a test<br/>
-$ curl https://file ayo/2ojE41<br/>
+$ curl https://example.com/2ojE41<br/>
 {"success":false,"error":404,"message":"Not Found"}
 							</code>
                     </p>
@@ -83,24 +83,10 @@ $ curl https://file ayo/2ojE41<br/>
                         <br/>
                         <br/>
                         <code>
-							$ curl -F "file=@test.txt" https://file ayo/?expires=1w<br/>
-{"success":true,"key":"aQbnDJ","link":"https://file ayo/aQbnDJ","expiry":"7 days"}<br/>
-$ sleep 604801 <br/>
-$ curl https://file ayo/aQbnDJ<br/>
-{"success":false,"error":404,"message":"Not Found"}
-							</code>
-                        <br/>
-                        <br/> The query param <strong>expires</strong> must be a positive integer which, by default, represents the number of days until the file will be deleted (defaults to 14 days). If you follow it with <strong>w</strong>, it will be the number of weeks. <strong>m</strong> for months and <strong>y</strong> for years.
-                    </p>
-                    <p>You can also send direct text to file ayo:
-                        <br/>
-                        <br/>
-                        <code>
-							$ curl --data "text=this is a secret pw" https://file ayo <br/>
-{"success":true,"key":"pgiPc2","link":"https://file ayo/pgiPc2","expiry":"14 days"}<br/>
-$ curl https://file ayo/pgiPc2<br/>
-this is a secret pw<br/>
-$ curl https://file ayo/pgiPc2<br/>
+							$ curl -F "file=@test.txt" https://example.com/?exp=60<br/>
+{"success":true,"key":"aQbnDJ","link":"https://example.com/aQbnDJ","expiry":"1 minutes"}<br/>
+$ sleep 1m <br/>
+$ curl https://example.com/aQbnDJ<br/>
 {"success":false,"error":404,"message":"Not Found"}
 							</code>
                         <br/>
@@ -123,23 +109,15 @@ $ curl https://file ayo/pgiPc2<br/>
                     <p>No, it is anonymous and we erase everything. Our log files contain no identifying information. There are no backups, and all files are stored encrypted.</p>
                     <h4>Is it free?</h4>
                     <p>Yes!</p>
-                    <h4>What are some use cases?</h4>
-                    <p><a href="https://temporary.pw">temporary.pw</a> is an example of a pretty cool use case.</p>
                     <h4>What kinds of files can I share?</h4>
-                    <p>No illegal or copyrighted content is allowed. By using file ayo you agree to the <a href="/tos.html">Terms of Service</a></p>
+                    <p>No illegal or copyrighted content is allowed. By using example.com you agree to the <a href="/tos.html">Terms of Service</a></p>
                     <h4>Is there a size limit?</h4>
                     <p>Yes, there is a 5GB per file limit for the free version.</p>
                     <h4>I have a question or comment - how can I contact you?</h4>
-                    <p>We would love to hear from you: <a href="mailto:support@file ayo">support@file ayo</a></p>
-                    <h4>I am not a programmer - how do I set an expiration date for the file?</h4>
-                    <p>You can use <a target="_blank" href="https://resttesttest.com/">resttesttest.com</a>. For the "endpoint" put:
-
-                        <code>https://file ayo/?expires=1w</code> You can change the "expires" to whatever you want - "1w" is one week.
-                        <br> You can see <a target="_blank" href="/assets/img/resttesttest.png">this screenshot</a> for an example, where the resulting link to your file is highlighted.</p>
+                    <p>We would love to hear from you: <a href="mailto:support@example.com">support@example.com</a></p>
+                    <br> You can see <a target="_blank" href="/assets/img/resttesttest.png">this screenshot</a> for an example, where the resulting link to your file is highlighted.</p>
                     <h4>Who are you and how can I trust you?</h4>
-                    <p>file ayo is a project of <a href="http://introvert.com">introvert.com</a>. It was created simply out of the joy of trying to build cool things on the internet, and we thought it may be useful for others. We take privacy very seriously and do not save any data once it has been deleted.</p>
-                    <h4>How did you get such a great domain name?</h4>
-                    <p>From the awesome service at <a href="http://park ayo">park ayo</a> - they have a lot of great <a href="http://park ayo">startup domain names</a> for hackers.</p>
+                    <p>Just read the codebase.</p>
                     <textarea class="js-copytextarea"></textarea>
                 </div>
             </section>
@@ -149,7 +127,7 @@ $ curl https://file ayo/pgiPc2<br/>
 
     <!-- Footer -->
     <footer id="footer">
-        <p class="copyright">&copy; Copyright 2020 <a href="http://introvert.com">introvert.com LLC</a>. Design credits: <a href="http://html5up.net">HTML5 UP</a></p>
+        <p class="copyright">&copy; Copyright 2020 <a href="https://github.com/codenoid/file.io">introverted person</a>. Design credits: <a href="http://html5up.net">HTML5 UP</a></p>
     </footer>
 
     <!-- Scripts -->
