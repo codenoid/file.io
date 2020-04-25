@@ -56,7 +56,7 @@ $ wget http://localhost:8080/eA9666
 - [x] Custom expiration option
 - [x] Content-Disposition header
 - [x] Multiple Storage Support (currently redis)
-- [ ] Max download option
+- [x] Max download option/times
 - [x] Simple API
 
 # Legal
