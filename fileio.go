@@ -21,6 +21,7 @@ var stg storage.Storage
 
 func main() {
 
+	// init storage.Storage and store to global variable
 	stg = storage.Storage{
 		Type: "redis",
 	}
@@ -58,6 +59,7 @@ func main() {
 		panic(err)
 	}
 
+	fmt.Println("starting server on *:8080")
 	// start listen
 	fmt.Println(http.ListenAndServe(":8080", http.HandlerFunc(Index)))
 }
@@ -130,6 +132,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`{"success": false, "error": 404, "message": "file not found"} `))
 		return
 	}
+
 	if r.Method == "POST" {
 
 		fileExp := 30 // in minute
