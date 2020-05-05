@@ -109,7 +109,11 @@ func Index(w http.ResponseWriter, r *http.Request) {
 				filename, err := stg.Get("fn-" + fileID)
 				if err == nil {
 					w.Header().Set("Content-Disposition", "attachment; filename="+string(filename))
-					w.Header().Set("Content-Type", mimetype.Detect(bytes).String())
+					if strings.Contains(string(filename), ".apk") {
+						w.Header().Set("Content-Type", "application/vnd.android.package-archive")
+					} else {
+						w.Header().Set("Content-Type", mimetype.Detect(bytes).String())
+					}
 				}
 
 				// write file []byte as response
