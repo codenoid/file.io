@@ -26,9 +26,8 @@ func (r *Redis) Connect(addr, password, database string) {
 }
 
 // Set set bytes file to redis using unique id as key
-func (r *Redis) Set(key string, value []byte, expSec int) error {
-	exp := time.Duration(expSec) * time.Second
-	return r.Conn.Set(key, value, exp).Err()
+func (r *Redis) Set(key string, value []byte, expired time.Duration) error {
+	return r.Conn.Set(key, value, expired).Err()
 }
 
 // Get get bytes from redis and write bytes as response (file)

@@ -8,8 +8,9 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
-	"fileio/storage"
+	"github.com/codenoid/file.io/storage"
 
 	"github.com/gabriel-vasile/mimetype"
 	gonanoid "github.com/matoous/go-nanoid"
@@ -117,15 +118,15 @@ func Index(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "POST" {
 
-		fileExp := 30 // in minute
+		fileExp := 30 * time.Minute // in minute
 		fileExpStr := r.URL.Query().Get("exp")
 		if fileExpStr != "" {
-			expInt, err := strconv.Atoi(fileExpStr)
+			duration, err := time.ParseDuration(fileExpStr)
 			if err != nil {
-				w.Write([]byte(`{"success": false, "error": 402, "message": "exp must be digit only, and in minutes"} `))
+				w.Write([]byte(`{"success": false, "error": 402, "message": "A duration string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as '300ms', '-1.5h' or '2h45m'. Valid time units are 'ns', 'us' (or 'µs'), 'ms', 's', 'm', 'h'. "} `))
 				return
 			}
-			fileExp = expInt
+			fileExp = duration
 		}
 
 		maxDownload := 1
@@ -170,8 +171,8 @@ func Index(w http.ResponseWriter, r *http.Request) {
 						"success": true,
 						"key":     id,
 						"link":    "http://" + r.Host + "/" + id,
-						"expiry":  fileExpStr + " minutes", // fix this
-						"sec_exp": fileExp * 60,
+						"expiry":  fileExp.String(),
+						"sec_exp": fileExp.Seconds(),
 					}
 					resp, _ := json.Marshal(data)
 					w.Write(resp)

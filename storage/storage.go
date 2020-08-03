@@ -4,10 +4,11 @@ import (
 	"errors"
 	"net/url"
 	"strings"
+	"time"
 )
 
 type StorageHandler interface {
-	Set(key string, value []byte, expSec int) error
+	Set(key string, value []byte, expired time.Duration) error
 	Get(key string) ([]byte, error)
 	Del(key string)
 }
