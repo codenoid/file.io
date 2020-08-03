@@ -28,11 +28,12 @@ func main() {
 		panic("empty DATABASE || DATABASE_TYPE (redis/badger) env")
 	}
 
-	stg, err := storage.Connect(database, databaseType)
+	conn, err := storage.Connect(database, databaseType)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+	stg = conn
 
 	// runtime test
 	if err := stg.Set("test", []byte("test"), 1); err != nil {
@@ -162,7 +163,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 			id, err := gonanoid.Generate("AiUeO69", 6)
 			if err == nil {
 				// set file content with id as key
-				err = stg.Set(id, fileBytes, fileExp*60)
+				err = stg.Set(id, fileBytes, fileExp)
 				if err == nil {
 					// set file max get / read
 					stg.Set("mg-"+id, []byte(strconv.Itoa(maxDownload)), (fileExp+10)*60)
