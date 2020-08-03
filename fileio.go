@@ -21,12 +21,14 @@ var indexHTML, _ = ioutil.ReadFile("./web/views/index.html")
 var stg storage.StorageHandler
 
 func main() {
-	dbURI := "redis://127.0.0.1:6379/0" // default DB
-	if os.Getenv("DB_URI") != "" {
-		dbURI = os.Getenv("DB_URI")
+	database := os.Getenv("DATABASE")
+	databaseType := os.Getenv("DATABASE_TYPE")
+
+	if database == "" || databaseType == "" {
+		panic("empty DATABASE || DATABASE_TYPE (redis/badger) env")
 	}
 
-	stg, err := storage.Connect(dbURI)
+	stg, err := storage.Connect(database, databaseType)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)

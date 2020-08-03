@@ -13,14 +13,15 @@ type StorageHandler interface {
 	Del(key string)
 }
 
-func Connect(dbURI string) (StorageHandler, error) {
-	connURI, err := url.Parse(dbURI)
-	if err != nil {
-		return nil, errors.New("unable to parse database URI: " + err.Error())
-	}
+func Connect(database, databaseType string) (StorageHandler, error) {
 
-	switch connURI.Scheme {
+	switch databaseType {
 	case "redis":
+		connURI, err := url.Parse(database)
+		if err != nil {
+			return nil, errors.New("unable to parse database URI: " + err.Error())
+		}
+
 		host := connURI.Host
 		pass, _ := connURI.User.Password()
 		db := strings.TrimLeft(connURI.Path, "/")
