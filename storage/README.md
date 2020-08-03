@@ -22,7 +22,7 @@ One interface to connect many of database, This package is aimed not only used f
 import "github.com/codenoid/file.io/storage"
 
 // type://user:pass@host:port/database
-stg = storage.Connect("redis://127.0.0.1:6379/0")
+stg, err := storage.Connect("redis://127.0.0.1:6379/0")
 
 // then you can call this function
 stg.Set()
