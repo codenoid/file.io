@@ -2,14 +2,14 @@ package main
 
 import (
 	"encoding/json"
-	"fileio/storage"
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"net/url"
 	"os"
 	"strconv"
 	"strings"
+
+	"fileio/storage"
 
 	"github.com/gabriel-vasile/mimetype"
 	gonanoid "github.com/matoous/go-nanoid"
@@ -17,41 +17,19 @@ import (
 
 var fs = http.FileServer(http.Dir("./web/static"))
 var indexHTML, _ = ioutil.ReadFile("./web/views/index.html")
-var stg storage.Storage
+var stg storage.StorageHandler
 
 func main() {
-
-	// init storage.Storage and store to global variable
-	stg = storage.Storage{
-		Type: "redis",
-	}
-
-	// start: fix this
-	auth := map[string]string{
-		"username": "",
-		"password": "",
-		"host":     "127.0.0.1:6379",
-		"database": "0",
-	}
-
-	// username:password@127.0.0.1:6379/0
+	dbURI := "redis://127.0.0.1:6379/0" // default DB
 	if os.Getenv("DB_URI") != "" {
-		connURI, err := url.Parse(os.Getenv("DB_URI"))
-		if err != nil {
-			panic(err)
-		}
-
-		stg.Type = connURI.Scheme
-
-		auth["username"] = connURI.User.Username()
-		auth["password"], _ = connURI.User.Password()
-		auth["host"] = connURI.Host
-		auth["database"] = strings.Replace(connURI.Path, "/", "", 1)
+		dbURI = os.Getenv("DB_URI")
 	}
 
-	// host, username, password, database
-	stg.Connect(auth["host"], auth["username"], auth["password"], auth["database"])
-	// end: fix this
+	stg, err := storage.Connect(dbURI)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 
 	// runtime test
 	if err := stg.Set("test", []byte("test"), 1); err != nil {
