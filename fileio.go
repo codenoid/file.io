@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"net/url"
 	"os"
 	"strconv"
 	"strings"
@@ -16,15 +15,9 @@ import (
 	gonanoid "github.com/matoous/go-nanoid"
 )
 
-type StorageHandler interface {
-	Set(key string, value []byte, expSec int) error
-	Get(key string) ([]byte, error)
-	Del(key string)
-}
-
 var fs = http.FileServer(http.Dir("./web/static"))
 var indexHTML, _ = ioutil.ReadFile("./web/views/index.html")
-var stg StorageHandler
+var stg storage.StorageHandler
 
 func main() {
 	dbURI := "redis://127.0.0.1:6379/0" // default DB
@@ -32,22 +25,9 @@ func main() {
 		dbURI = os.Getenv("DB_URI")
 	}
 
-	connURI, err := url.Parse(dbURI)
+	stg, err := storage.Connect(dbURI)
 	if err != nil {
-		panic(err)
-	}
-
-	switch connURI.Scheme {
-	case "redis":
-		host := connURI.Host
-		pass, _ := connURI.User.Password()
-		db := strings.TrimLeft(connURI.Path, "/")
-		rds := storage.Redis{}
-		rds.Connect(host, pass, db)
-		stg = &rds
-
-	default:
-		fmt.Println("unknown storage:", connURI.Scheme)
+		fmt.Println(err)
 		os.Exit(1)
 	}
 
