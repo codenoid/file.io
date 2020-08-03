@@ -16,6 +16,10 @@ type StorageHandler interface {
 func Connect(database, databaseType string) (StorageHandler, error) {
 
 	switch databaseType {
+	case "badger":
+		stg := Badger{}
+		stg.Connect(database)
+		return &stg, nil
 	case "redis":
 		connURI, err := url.Parse(database)
 		if err != nil {
@@ -25,10 +29,11 @@ func Connect(database, databaseType string) (StorageHandler, error) {
 		host := connURI.Host
 		pass, _ := connURI.User.Password()
 		db := strings.TrimLeft(connURI.Path, "/")
-		rds := Redis{}
-		rds.Connect(host, pass, db)
-		return &rds, nil
+		stg := Redis{}
+		stg.Connect(host, pass, db)
+		return &stg, nil
+	default:
+		return nil, errors.New("unknown storage: " + databaseType)
 	}
 
-	return nil, errors.New("unknown storage: " + connURI.Scheme)
 }
