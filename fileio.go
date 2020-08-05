@@ -165,9 +165,9 @@ func Index(w http.ResponseWriter, r *http.Request) {
 				err = stg.Set(id, fileBytes, fileExp)
 				if err == nil {
 					// set file max get / read
-					stg.Set("mg-"+id, []byte(strconv.Itoa(maxDownload)), (fileExp+10)*60)
+					stg.Set("mg-"+id, []byte(strconv.Itoa(maxDownload)), (fileExp + 10))
 					// set file name expiration with fn-<file-id> as key
-					stg.Set("fn-"+id, []byte(fileHeader.Filename), (fileExp+10)*60)
+					stg.Set("fn-"+id, []byte(fileHeader.Filename), (fileExp + 10))
 					// setup json response
 					data := map[string]interface{}{
 						"success": true,
