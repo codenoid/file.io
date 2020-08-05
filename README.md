@@ -14,8 +14,9 @@ Using [file.io-clone](https://hub.docker.com/r/codenoid/file.io-clone) docker im
 
 ```sh
 $ docker pull codenoid/file.io-clone
-$ docker run --env DATABASE_TYPE=redis --env DATABASE=redis://host.docker.internal:6379/0 -p 3003:8080 codenoid/file.io-clone
+$ docker run --env DATABASE=redis://host.docker.internal:6379/0 -p 3003:8080 codenoid/file.io-clone
   # host.docker.internal currently only works in Windows & Mac, open *:3003 on your browser
+  # for badger database, --env DATABASE=badger:/path/to/folder
 ```
 
 ### Building From Source
@@ -30,14 +31,15 @@ $ ./fileio # open localhost:8080 on your browser
 
 ### Configuring
 
-there is two environment variable that related with database : 
+Simply, you just need to set `DATABASE` env : 
 
+```sh
+# for redis
+DATABASE=redis://127.0.0.1:6379/0
+# for badger, you need to specify existing or new badger working directory, if the directory is empty
+# badger will automatically create the directory and write the data into it
+DATABASE=badger:/full/path/to/folder
 ```
-DATABASE_TYPE=redis or badger
-DB_URI=redis://127.0.0.1:6379/0 or /path/to/folder
-```
-
-/path/to/folder will be used to store badger data
 
 ## Example Usage
 
@@ -46,7 +48,7 @@ DB_URI=redis://127.0.0.1:6379/0 or /path/to/folder
 ```sh
 # upload
 $ curl -F "file=@filename.jpg" http://localhost:8080/?exp=60s
-{"expiry":"1 minutes","key":"eA9666","link":"http://localhost:8080/eA9666","sec_exp": 60,"success":true}
+{"expiry":"1m0s","key":"eA9666","link":"http://localhost:8080/eA9666","sec_exp": 60,"success":true}
 # download
 $ wget --content-disposition http://localhost:8080/eA9666
 # xxxx-file-name downloaded, use chmod if it was binary
@@ -55,7 +57,7 @@ $ wget http://localhost:8080/eA9666
 
 # max file download times
 $ curl -F "file=@filename.jpg" http://localhost:8080/?exp=60s&max=2
-{"expiry":"1 minutes","key":"eA9666","link":"http://localhost:8080/eA9OeA","sec_exp": 60,"success":true}
+{"expiry":"1m0s","key":"eA9666","link":"http://localhost:8080/eA9OeA","sec_exp": 60,"success":true}
 $ wget --content-disposition http://localhost:8080/eA9OeA
 # downloaded
 $ wget --content-disposition http://localhost:8080/eA9OeA
