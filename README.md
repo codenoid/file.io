@@ -25,6 +25,8 @@ before this, make sure [Go](https://golang.org/dl/) already installed on your ma
 
 ```sh
 $ git clone https://github.com/codenoid/file.io.git && cd file.io
+$ go get github.com/GeertJohan/go.rice/rice
+$ rice embed-go
 $ go build -trimpath
 $ ./fileio # open localhost:8080 on your browser
 ```
