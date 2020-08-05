@@ -36,7 +36,7 @@ func main() {
 	stg = conn
 
 	// runtime test
-	if err := stg.Set("test", []byte("test"), 1); err != nil {
+	if err := stg.Set("test", []byte("test"), 1*time.Second); err != nil {
 		fmt.Println("runtime test failed")
 		panic(err)
 	}
