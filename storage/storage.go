@@ -13,27 +13,31 @@ type StorageHandler interface {
 	Del(key string)
 }
 
-func Connect(database, databaseType string) (StorageHandler, error) {
+// Connect to specified `database`, return error if given `database` are invalid or unknown or
+// panic if failed to connect
+func Connect(database string) (StorageHandler, error) {
 
-	switch databaseType {
+	databaseURI, err := url.Parse(database)
+	if err != nil {
+		return nil, errors.New("unable to parse database URI: " + err.Error())
+	}
+
+	// put general information in there
+	host := databaseURI.Host
+	pass, _ := databaseURI.User.Password()
+	db := strings.TrimLeft(databaseURI.Path, "/")
+
+	switch databaseURI.Scheme {
 	case "badger":
 		stg := Badger{}
-		stg.Connect(database)
+		stg.Connect(databaseURI.Path)
 		return &stg, nil
 	case "redis":
-		connURI, err := url.Parse(database)
-		if err != nil {
-			return nil, errors.New("unable to parse database URI: " + err.Error())
-		}
-
-		host := connURI.Host
-		pass, _ := connURI.User.Password()
-		db := strings.TrimLeft(connURI.Path, "/")
 		stg := Redis{}
 		stg.Connect(host, pass, db)
 		return &stg, nil
 	default:
-		return nil, errors.New("unknown storage: " + databaseType)
+		return nil, errors.New("unknown storage: " + database)
 	}
 
 }

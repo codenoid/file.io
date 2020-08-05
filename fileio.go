@@ -22,13 +22,12 @@ var stg storage.StorageHandler
 
 func main() {
 	database := os.Getenv("DATABASE")
-	databaseType := os.Getenv("DATABASE_TYPE")
 
-	if database == "" || databaseType == "" {
-		panic("empty DATABASE || DATABASE_TYPE (redis/badger) env")
+	if database == "" {
+		panic("empty DATABASE env, example value: redis://127.0.0.1:27017, badger:/path/to/folder;")
 	}
 
-	conn, err := storage.Connect(database, databaseType)
+	conn, err := storage.Connect(database)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
