@@ -3,6 +3,7 @@ module github.com/codenoid/file.io
 go 1.14
 
 require (
+	github.com/GeertJohan/go.rice v1.0.0
 	github.com/dgraph-io/badger v1.6.1
 	github.com/dgraph-io/badger/v2 v2.0.3 // indirect
 	github.com/gabriel-vasile/mimetype v1.1.0

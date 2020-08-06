@@ -10,17 +10,23 @@ import (
 	"strings"
 	"time"
 
-	"github.com/codenoid/file.io/storage"
-
+	rice "github.com/GeertJohan/go.rice"
 	"github.com/gabriel-vasile/mimetype"
 	gonanoid "github.com/matoous/go-nanoid"
+
+	"github.com/codenoid/file.io/storage"
 )
 
-var fs = http.FileServer(http.Dir("./web/static"))
-var indexHTML, _ = ioutil.ReadFile("./web/views/index.html")
+var box *rice.Box
+var fs http.Handler
+var indexHTML []byte
 var stg storage.StorageHandler
 
 func main() {
+	box = rice.MustFindBox("web")
+	fs = http.FileServer(box.HTTPBox())
+	indexHTML, _ = box.Bytes("views/index.html")
+
 	database := os.Getenv("DATABASE")
 
 	if database == "" {
@@ -52,7 +58,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		// Serve static file
 		if len(r.URL.Path) > 7 {
 			if r.URL.Path[:7] == "/static" {
-				http.StripPrefix("/static", fs).ServeHTTP(w, r)
+				fs.ServeHTTP(w, r)
 				return
 			}
 		}
